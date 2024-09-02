@@ -134,6 +134,7 @@ int main(int argc, char** argv) {
       //    - git diff <file1> <file2>
       //    - git commit
       //    - git push
+      cout << 'test';
       cout << stringCompare("astro", "astronaut") << endl;
       int tokens = parseCommand(argv[i], commands);
       // TODO: Write your code here...
