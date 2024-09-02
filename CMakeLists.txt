@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.24)
+project(F24_Assignment_1_The_Git_that_keeps_on_giving)
+
+set(CMAKE_CXX_STANDARD 17)
+
+add_executable(F24_Assignment_1_The_Git_that_keeps_on_giving main.cpp)
