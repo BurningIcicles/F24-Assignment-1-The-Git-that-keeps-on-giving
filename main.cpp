@@ -134,8 +134,6 @@ int main(int argc, char** argv) {
       //    - git diff <file1> <file2>
       //    - git commit
       //    - git push
-      cout << 'test';
-      cout << stringCompare("astro", "astronaut") << endl;
       int tokens = parseCommand(argv[i], commands);
       // TODO: Write your code here...
       // -->
@@ -148,7 +146,7 @@ int parseCommand(const char* str, char** tokens) {
     static char line[MAX_STR_LEN];
     char space = ' ';
 
-    for (int i = 0; i < strLength(str); i++) {
+    for (size_t i = 0; i < strLength(str); i++) {
         if (str[i] != space) {
             line[i] = str[i];
         } else {
@@ -156,7 +154,7 @@ int parseCommand(const char* str, char** tokens) {
         }
     }
 
-    for (int i = 0; i < sizeof(line) / sizeof(line[0]); i++) {
+    for (size_t i = 0; i < sizeof(line) / sizeof(line[0]); i++) {
         cout << line[i] << endl;
         if (line[i] == '\0')
             break;
@@ -167,19 +165,33 @@ int parseCommand(const char* str, char** tokens) {
 }
 
 bool makeDirectory(const char* name, vector<Directory>& directories) {
-    return false;
+    Directory directory = { .name = name};
+    directories.push_back(directory);
 }
 
 int findDirectory(const char* name, vector<Directory>& directories) {
-    return 0;
+    for (size_t i = 0; i < directories.size(); i++) {
+        if (directories[i].name == name) {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 int findFileInDirectory(const char* name, Directory& dir) {
-    return 0;
+    vector<File> files = dir.files;
+    for (size_t i = 0; i < files.size(); i++) {
+        if (files[i].name == name) {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 void printUsage() {
-    for (int i = 0; i < strLength(USAGE.c_str()); i++) {
+    for (size_t i = 0; i < strLength(USAGE.c_str()); i++) {
         cout << USAGE[i];
     }
 }
@@ -189,7 +201,7 @@ bool stringCompare(const char* s1, const char* s2) {
         return false;
     }
 
-    for (int i = 0; i < strLength(s1); i++) {
+    for (size_t i = 0; i < strLength(s1); i++) {
         if (s1[i] != s2[i]) {
             return false;
         }
@@ -205,18 +217,55 @@ int strLength(const char* str) {
     return len;
 }
 
+// TODO: is `name` the name of the new file or the file to be searched for
 bool addFileToDirectory(const char* name, Directory& dir) {
+    // file inside of project folder
+//    ifstream projectFile;
+//    projectFile.open(name);
+//    string line;
+//
+//    File file = {.name};
+//
+//    while (!file.eof()) {
+//        getline(file, line);
+//
+//    }
+
     return true;
 }
 
+//TODO: is `files` the names of all the files to be removed?
+//TODO: what degree of constants is bad?
 void removeFileFromDirectory(vector<char*>& files, Directory& dir, bool& flag) {
 
 }
 
 bool searchInFile(const char* str, Position& position, File& file) {
-    return true;
+    for (size_t i = 0; i < file.lines.size(); i++) {
+        if (file.lines[i].find(str) != string::npos) {
+            position.line = i;
+            position.column = file.lines[i].find(str);
+            position.length = strLength(str);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool replaceInFile(const char* str, Position& position, File& file) {
+    string targetLine = file.lines[position.line];
+
+    // can not replace a line with a negative index or an index higher than number of lines in file
+    if (position.line < 0 || position.line > file.lines.size()) {
+        return false;
+    }
+
+    // can not replace column with negative index or higher than number of characters in line
+    if (position.column < 0 || position.column > strLength(file.lines[position.line].c_str())) {
+        return false;
+    }
+
+
     return true;
 }
