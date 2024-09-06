@@ -134,7 +134,8 @@ int main(int argc, char** argv) {
       //    - git diff <file1> <file2>
       //    - git commit
       //    - git push
-      int tokens = parseCommand(argv[i], commands);
+      cout << argc - 1 << ' ';
+//      int tokens = parseCommand(argv[i], commands);
       // TODO: Write your code here...
       // -->
    }
@@ -143,30 +144,28 @@ int main(int argc, char** argv) {
 
 // TODO: write the implementation of each function here!
 int parseCommand(const char* str, char** tokens) {
-    static char line[MAX_STR_LEN];
-    char space = ' ';
+    char line[MAX_STR_LEN];
+    int argc = 0;
 
-    for (size_t i = 0; i < strLength(str); i++) {
-        if (str[i] != space) {
-            line[i] = str[i];
-        } else {
+    int i = 0;
+    while (str[i] != '\0') {
+        if (str[i] == ' ') {
             line[i] = '\0';
+            argc++;
+        } else {
+            line[i] = str[i];
         }
+
+        i++;
     }
 
-    for (size_t i = 0; i < sizeof(line) / sizeof(line[0]); i++) {
-        cout << line[i] << endl;
-        if (line[i] == '\0')
-            break;
-    }
-
-    cout << "Size of: " << sizeof(tokens) / sizeof(tokens[0]) << endl;
-    return sizeof(tokens) / sizeof(tokens[0]);
+    return argc;
 }
 
 bool makeDirectory(const char* name, vector<Directory>& directories) {
     Directory directory = { .name = name};
     directories.push_back(directory);
+    return true;
 }
 
 int findDirectory(const char* name, vector<Directory>& directories) {
@@ -217,27 +216,50 @@ int strLength(const char* str) {
     return len;
 }
 
-// TODO: is `name` the name of the new file or the file to be searched for
 bool addFileToDirectory(const char* name, Directory& dir) {
     // file inside of project folder
-//    ifstream projectFile;
-//    projectFile.open(name);
-//    string line;
-//
-//    File file = {.name};
-//
-//    while (!file.eof()) {
-//        getline(file, line);
-//
-//    }
+    vector<string> lines;
+    string line;
+    ifstream projectFile;
+    projectFile.open(name);
 
+    if (!projectFile.is_open()) {
+        return false;
+    }
+
+    while (!projectFile.eof()) {
+        getline(projectFile, line);
+        lines.push_back(line);
+    }
+
+    File file = {
+        .name = name,
+        .lines = lines
+    };
+    dir.files.push_back(file);
+
+    projectFile.close();
     return true;
 }
 
-//TODO: is `files` the names of all the files to be removed?
-//TODO: what degree of constants is bad?
 void removeFileFromDirectory(vector<char*>& files, Directory& dir, bool& flag) {
+    flag = true;
+    // iterate backwards for proper traversal while removing elements
+    for (size_t i = files.size() - 1; i > 0; i--) {
+        string fileToBeRemoved = files[i];
+        for (size_t j = dir.files.size() - 1; j > 0; j--) {
+            string curFile = dir.files[j].name;
+            if (fileToBeRemoved == curFile) {
+                // remove file
+                files.erase(files.begin() + i);
+                dir.files.erase(dir.files.begin() + j);
+            }
+        }
+    }
 
+    if (files.size() > 0) {
+        flag = false;
+    }
 }
 
 bool searchInFile(const char* str, Position& position, File& file) {
