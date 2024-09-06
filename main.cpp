@@ -1,8 +1,8 @@
 /*
 * Name: Richies Huynh, 5009307792, 1
-* Description: .
-* Input: .
-* Output: .
+* Description: Pass in a Git command and can create files and directories using commit, push, etc.
+* Input: Git command
+* Output: The corresponding success / error message in terminal and completes action
 */
 
 #include <iostream>
@@ -118,6 +118,8 @@ int main(int argc, char** argv) {
    // <-- add your variables here
    // TODO: use some variables to keep track of the current working directory and current working file.
    // -->
+   Directory workingDirectory;
+   File workingFile;
    // We begin at 1 because 0 contains the name of the program, which
    // is not a command!
    for (int i = 1; i < argc; i++) {
@@ -135,7 +137,7 @@ int main(int argc, char** argv) {
       //    - git commit
       //    - git push
       cout << argc - 1 << ' ';
-//      int tokens = parseCommand(argv[i], commands);
+      int tokens = parseCommand(argv[i], commands);
       // TODO: Write your code here...
       // -->
    }
@@ -144,16 +146,15 @@ int main(int argc, char** argv) {
 
 // TODO: write the implementation of each function here!
 int parseCommand(const char* str, char** tokens) {
-    char line[MAX_STR_LEN];
     int argc = 0;
 
     int i = 0;
     while (str[i] != '\0') {
         if (str[i] == ' ') {
-            line[i] = '\0';
+            tokens[0][i] = '\0';
             argc++;
         } else {
-            line[i] = str[i];
+            tokens[0][i] = str[i];
         }
 
         i++;

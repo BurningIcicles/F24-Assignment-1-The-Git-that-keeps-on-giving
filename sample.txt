@@ -1,4 +1,0 @@
-hello world
-hello kishore
-hello richies
-goodbye
