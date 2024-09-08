@@ -1,0 +1,37 @@
+Java is related to C++, which is a direct descendant of C. Much of the character of Java is
+inherited from these two languages. From C, Java derives its syntax. Many of Java’s object-
+oriented features were influenced by C++. In fact, several of Java’s defining characteristics
+come from—or are responses to—its predecessors. Moreover, the creation of Java was
+deeply rooted in the process of refinement and adaptation that has been occurring in
+computer programming languages for the past several decades. For these reasons, this
+section reviews the sequence of events and forces that led to Java. As you will see, each
+innovation in language design was driven by the need to solve a fundamental problem
+that the preceding languages could not solve. Java is no exception.
+
+The C language shook the computer world. Its impact should not be underestimated, because
+it fundamentally changed the way programming was approached and thought about. The
+creation of C was a direct result of the need for a structured, efficient, high-level language
+that could replace assembly code when creating systems programs. As you probably know,
+when a computer language is designed, trade-offs are often made, such as the following:
+
+1. Ease-of-use versus power
+2. Safety versus efficiency
+3. Rigidity versus extensibility
+
+Prior to C, programmers usually had to choose between languages that optimized one
+set of traits or the other. For example, although FORTRAN could be used to write fairly
+efficient programs for scientific applications, it was not very good for system code. And
+while BASIC was easy to learn, it wasn’t very powerful, and its lack of structure made its
+usefulness questionable for large programs. Assembly language can be used to produce
+highly efficient programs, but it is not easy to learn or use effectively. Further, debugging
+assembly code can be quite difficult.
+
+Another compounding problem was that early computer languages such as BASIC,
+COBOL, and FORTRAN were not designed around structured principles. Instead, they
+relied upon the GOTO as a primary means of program control. As a result, programs
+written using these languages tended to produce "spaghetti code"—a mass of tangled
+jumps and conditional branches that make a program virtually impossible to understand.
+While languages like Pascal are structured, they were not designed for efficiency, and failed
+to include certain features necessary to make them applicable to a wide range of programs.
+(Specifically, given the standard dialects of Pascal available at the time, it was not practical
+to consider using Pascal for systems-level code.)

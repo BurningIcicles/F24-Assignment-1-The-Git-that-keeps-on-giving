@@ -1,0 +1,88 @@
+
+1.) ./a.out
+
+ERROR: invalid number of command-line arguments.
+
+// ------------------------------------------------------------------------
+
+2.) ./a.out "git add"
+
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'add' instead.
+WARNING: make sure a working directory is already opened.
+ERROR: cannot add a file because repository does not exist.
+
+3.) ./a.out "git add f1"
+
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+ERROR: cannot add a file because repository does not exist.
+
+4.) ./a.out "git add f1 to"
+
+ERROR: invalid number of command-line arguments for git add.
+ERROR: syntax error found in git add. Missing name of directory.
+
+// ------------------------------------------------------------------------
+
+5.) ./a.out "git rm"
+
+WARNING: possible syntax error found in git rm.
+WARNING: missing 'from' in command, found 'rm' instead.
+WARNING: make sure a working directory is already opened.
+ERROR: cannot remove a file because repository does not exist.
+
+6.) ./a.out "git rm f1 from"
+
+ERROR: invalid number of command-line arguments for git rm.
+ERROR: syntax error found in git rm. Missing name of directory.
+
+// ------------------------------------------------------------------------
+
+7.) ./a.out "git mv"
+
+ERROR: invalid number of command-line arguments for git mv.
+ERROR: syntax error found in git mv. Missing name of directory and filename.
+
+8.) ./a.out "git mv f1 to"
+
+ERROR: invalid number of command-line arguments for git mv.
+ERROR: syntax error found in git mv. Missing filename.
+
+// ------------------------------------------------------------------------
+
+9.) ./a.out "git grep"
+
+WARNING: possible syntax error in git grep.
+WARNING: missing 'in' in command, found 'grep' instead.
+WARNING: make sure a working file is already opened.
+ERROR: cannot find pattern in file because repository does not exist.
+
+10.) ./a.out "git grep hello"
+
+WARNING: possible syntax error in git grep.
+WARNING: missing 'in' in command, found 'hello' instead.
+WARNING: make sure a working file is already opened.
+ERROR: cannot find pattern in file because repository does not exist.
+
+11.) ./a.out "git grep hello with f1"
+
+WARNING: possible syntax error in git grep.
+WARNING: missing 'in' in command, found 'f1' instead.
+WARNING: make sure a working file is already opened.
+ERROR: invalid number of command-line arguments for git grep.
+ERROR: filename cannot be a pattern.
+
+
+// ------------------------------------------------------------------------
+
+12.) ./a.out "git diff"
+
+ERROR: invalid number of command-line arguments for git diff.
+ERROR: command git diff expects 2 arguments, found 0.
+
+13.) ./a.out "git diff f1"
+
+ERROR: invalid number of command-line arguments for git diff.
+ERROR: command git diff expects 2 arguments, found 1.

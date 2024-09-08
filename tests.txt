@@ -1,0 +1,332 @@
+TESTS
+
+1.) ./a.out "git"
+
+usage: git <command> [<args>]
+
+These are common Git commands used in various situations:
+
+start a working area (a directory)
+   clone    Clone a repository into a new directory
+   init     Create an empty Git repository
+
+work on the current change
+   add      Add a file contents to the index
+   mv       Move or rename a file or directory
+   rm       Remove files from the working directory
+
+examine the history and state
+   diff     Show changes between commits
+   grep     Print lines matching a pattern
+
+grow, mark and tweak your common history
+   commit   Record changes to the repository
+
+collaborate (see also: git help workflows)
+   push     Update remote refs along with associated objects
+
+// ------------------------------------------------------------------------
+
+2.) ./a.out "git init test"
+
+INFO: repository successfully created!
+
+3.) ./a.out "git init test" "git add f1 to test"
+
+INFO: repository successfully created!
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+
+4.) ./a.out "git init test" "git add f1"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+
+// ------------------------------------------------------------------------
+
+5.) ./a.out "git init test" "git add f1" "git show f1"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+ERROR: there are no commits to display.
+
+// ------------------------------------------------------------------------
+
+6.) ./a.out "git init test" "git add f1" "git grep provides with offers"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+WARNING: possible syntax error in git grep.
+WARNING: missing 'in' in command, found 'offers' instead.
+WARNING: make sure a working file is already opened.
+ERROR: cannot find pattern because file does not exist.
+
+7.) ./a.out "git init test" "git add f1" "git grep provides with offers in f1"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'provides' in f1...
+INFO: pattern of length 8 was found on line 6 at column 20
+INFO: replacing pattern 'provides' with 'offers'.
+INFO: changes moved to the staging area.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+
+// ------------------------------------------------------------------------
+
+8.) ./a.out "git init test" "git add f1" "git grep provides with offers in f1" "git commit"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'provides' in f1...
+INFO: pattern of length 8 was found on line 6 at column 20
+INFO: replacing pattern 'provides' with 'offers'.
+INFO: changes moved to the staging area.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+INFO: removing the front element from the staging area and inserting it into the commits vector.
+INFO: remaining elements in staging area: 0
+
+// ------------------------------------------------------------------------
+
+9.) ./a.out "git init test" "git add f1" "git grep provides with offers in f1" "git commit" "git show f1"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'provides' in f1...
+INFO: pattern of length 8 was found on line 6 at column 20
+INFO: replacing pattern 'provides' with 'offers'.
+INFO: changes moved to the staging area.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+INFO: removing the front element from the staging area and inserting it into the commits vector.
+INFO: remaining elements in staging area: 0
+INFO: pending commits for file f1.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+
+// ------------------------------------------------------------------------
+
+10.) ./a.out "git init test" "git add f1" "git grep provides with offers in f1" "git commit" "git show"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'provides' in f1...
+INFO: pattern of length 8 was found on line 6 at column 20
+INFO: replacing pattern 'provides' with 'offers'.
+INFO: changes moved to the staging area.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+INFO: removing the front element from the staging area and inserting it into the commits vector.
+INFO: remaining elements in staging area: 0
+INFO: pending commits for file f1.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+
+// ------------------------------------------------------------------------
+
+11.) ./a.out "git init test" "git add f1" "git grep provides with offers in f1" "git commit" "git show" "git reset"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'provides' in f1...
+INFO: pattern of length 8 was found on line 6 at column 20
+INFO: replacing pattern 'provides' with 'offers'.
+INFO: changes moved to the staging area.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+INFO: removing the front element from the staging area and inserting it into the commits vector.
+INFO: remaining elements in staging area: 0
+INFO: pending commits for file f1.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+ERROR: cannot reset files because staging area is empty.
+
+// ------------------------------------------------------------------------
+
+12.) ./a.out "git init test" "git add f1" "git grep provides with offers in f1" "git show f1" "git reset"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'provides' in f1...
+INFO: pattern of length 8 was found on line 6 at column 20
+INFO: replacing pattern 'provides' with 'offers'.
+INFO: changes moved to the staging area.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+ERROR: there are no commits to display.
+INFO: removing changes from staging area.
+INFO: current changes in staging area: 1.
+INFO: after resetting the staging area size is now 0.
+
+// ------------------------------------------------------------------------
+
+13.) ./a.out "git init test" "git add f1 to test" "git grep hello in f1"
+
+INFO: repository successfully created!
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'hello' in f1...
+ERROR: pattern 'hello' does not exist in f1.
+
+// ------------------------------------------------------------------------
+
+14.) ./a.out "git init test" "git add f1 to test" "git grep C++ in f1"
+
+INFO: repository successfully created!
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'C++' in f1...
+INFO: pattern of length 3 was found on line 1 at column 0
+
+// ------------------------------------------------------------------------
+
+15.) ./a.out "git init test" "git add f1" "git grep provides with offers in f1" "git show f1" "git push"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'provides' in f1...
+INFO: pattern of length 8 was found on line 6 at column 20
+INFO: replacing pattern 'provides' with 'offers'.
+INFO: changes moved to the staging area.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+ERROR: there are no commits to display.
+INFO: the commits vector is empty. No files are ready to be pushed.
+
+// ------------------------------------------------------------------------
+
+16.) ./a.out "git init test" "git add f1" "git grep provides with offers in f1" "git commit" "git push"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: searching for 'provides' in f1...
+INFO: pattern of length 8 was found on line 6 at column 20
+INFO: replacing pattern 'provides' with 'offers'.
+INFO: changes moved to the staging area.
+INFO: more concisely. C++ offers some especially powerful shorthands.
+INFO: removing the front element from the staging area and inserting it into the commits vector.
+INFO: remaining elements in staging area: 0
+INFO: pushing 1 elements from the commits vector.
+INFO: update file 'f1'...
+INFO: file was successfully updated.
+
+// ------------------------------------------------------------------------
+
+17.) ./a.out "git init test" "git add f1" "git add f2"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f2' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f2' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f2' was successfully added.
+
+// ------------------------------------------------------------------------
+
+18.) ./a.out "git init test" "git add f1" "git add f2" "git diff f1 f2"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f2' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f2' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f2' was successfully added.
+INFO: file 1 and file 2 are not the same.
+
+// ------------------------------------------------------------------------
+
+19.) ./a.out "git init test" "git add f1" "git add f2" "git diff f1 f1"
+
+INFO: repository successfully created!
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f1' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+WARNING: possible syntax error found in git add.
+WARNING: missing 'to' in command, found 'f2' instead.
+WARNING: make sure a working directory is already opened.
+INFO: file 'f2' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f2' was successfully added.
+INFO: file 1 and file 2 are the same.
+
+// ------------------------------------------------------------------------
+
+20.) ./a.out "git init test" "git add f1 to test" "git add f3 to test" "git diff f1 f3"
+
+INFO: repository successfully created!
+INFO: file 'f1' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f1' was successfully added.
+INFO: file 'f3' not found in test.
+INFO: Adding file to repository...
+INFO: file 'f3' was successfully added.
+INFO: diff: f1: 1. Conciseness: programming languages allow us to express common sequences of commands
+INFO: diff: f3: 1. Conciseness: programming languages enable us to express common sequences of commands
+INFO: diff: f1: 3. Portability: diﬀerent processors make diﬀerent instructions available. Programs written
+INFO: diff: f3: 3. Portability: diﬀerent directives make diﬀerent instructions available. Programs written

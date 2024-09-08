@@ -1,8 +1,10 @@
 /*
 * Name: Richies Huynh, 5009307792, 1
-* Description: Pass in a Git command and can create files and directories using commit, push, etc.
+* Description: Pass in a Git command and can create files and directories
+               using commit, push, etc.
 * Input: Git command
-* Output: The corresponding success / error message in terminal and completes action
+* Output: The corresponding success / error message in terminal and
+          completes action
 */
 
 #include <iostream>
@@ -15,6 +17,60 @@ using namespace std;
 
 /// These constant variables are self-explanatory. Each is assigned
 /// a default value to silence CodeGrade's silly error detection.
+const char* TOKEN_GIT = "git";
+const char* TOKEN_HELP = "help";
+const char* TOKEN_CLONE = "clone";
+const char* TOKEN_INIT = "init";
+const char* TOKEN_ADD = "add";
+const char* TOKEN_MV = "mv";
+const char* TOKEN_RM = "rm";
+const char* TOKEN_DIFF = "diff";
+const char* TOKEN_GREP = "grep";
+const char* TOKEN_COMMIT = "commit";
+const char* TOKEN_PUSH = "push";
+const char* TOKEN_TO = "to";
+
+const char* TOKENS[12] = {
+        TOKEN_GIT,
+        TOKEN_HELP,
+        TOKEN_CLONE,
+        TOKEN_INIT,
+        TOKEN_ADD,
+        TOKEN_MV,
+        TOKEN_RM,
+        TOKEN_DIFF,
+        TOKEN_GREP,
+        TOKEN_COMMIT,
+        TOKEN_PUSH,
+        TOKEN_TO
+};
+
+const int TOKENS_SIZE = sizeof(TOKENS) / sizeof(TOKENS[0]);
+
+const char* WARNING_GENERAL_DIRECTORY = "WARNING: make sure a working "
+                                        "directory is already opened.";
+
+const char* WARNING_ADD_SYNTAX = "WARNING: possible syntax error found "
+                                 "in git add.";
+
+const char* WARNING_ADD_MISSING_TO = "WARNING: missing 'to' in command, "
+                                     "found 'add' instead.";
+
+const char* ERROR_GENERAL_INVALID = "ERROR: invalid command";
+
+const char* ERROR_ADD_REPOSITORY = "ERROR: cannot add a file because "
+                                   "repository does not exist.";
+
+const char* ERROR_ADD_INVALID_NUM_CLI = "ERROR: invalid number of "
+                                        "command-line arguments for"
+                                        " git add.";
+
+const char* ERROR_ADD_MISSING_DIRECTORY = "ERROR: syntax error found "
+                                          "in git add. Missing name "
+                                          "of directory.";
+
+
+
 const int SUCCESS = 0;
 const int FAILURE = 0;
 const int MAX_STR_LEN = 1024;
@@ -86,79 +142,156 @@ int strLength(const char* str);
 
 bool addFileToDirectory(const char* name, Directory& dir);
 
-void removeFileFromDirectory(vector<char*>& files, Directory& dir, bool& flag);
+void removeFileFromDirectory(vector<char*>& files, Directory& dir,
+                             bool& flag);
 
 bool searchInFile(const char* str, Position& position, File& file);
 
 bool replaceInFile(const char* str, Position& position, File& file);
 
+bool inArray(const char** haystack, string needle, int size);
+
+void printArray(const char* arr[], int size);
 ///@fn int main(int, char**)
 ///@brief Entry point of our application.
-///@param[in]argc the number of command-line argument passed to the program.
+///@param[in]argc the number of command-line argument passed to
+/// the program.
 ///@param[in]argv the vector of command-line arguments.
-///@return SUCCESS if the program terminated successfully or FAILURE otherwise.
+///@return SUCCESS if the program terminated successfully
+/// or FAILURE otherwise.
 int main(int argc, char** argv) {
-   // bailed out if we do not have enough arguments to process
-   if (argc < 2) {
-      cout << "ERROR: invalid number of command-line arguments." << endl;
-      return FAILURE;
-   }
-   // Contains all repositories added via command-line. Don't forget
-   // to close a previously opened directory!
-   vector<Directory> directories;
-   // Contains all changes made to files and before a commit command
-   // is executed. Don't forget to move them to the commits vector
-   // every time a commit command is executed
-   vector<Position> stagingArea;
-   // Contains all changes made to files which are ready to be pushed! (a.k.a supercommit)
-   vector<Position> commits;
-   // Contains the parsed command, that is, a sequence of tokens that
-   // you should process and evaluate individually
-   char* commands[MAX_ARGS];
-   // <-- add your variables here
-   // TODO: use some variables to keep track of the current working directory and current working file.
-   // -->
-   Directory workingDirectory;
-   File workingFile;
-   // We begin at 1 because 0 contains the name of the program, which
-   // is not a command!
-   for (int i = 1; i < argc; i++) {
-      // <--
-      // 1. Make sure to validate each command before executing each command
-      //    that is, check for syntax!!
-      // 2. Here is the list of commands that you must implement and use:
-      //    - git OR git help
-      //    - git init <dir>
-      //    - git add <file_1> <file_2> ... <file_N> to <dir>
-      //    - git rm <file_1> <file_2> ... <file_N> from <dir>
-      //    - git mv <file> to <dir> <file>
-      //    - git grep <pattern> in <file> OR git grep <pattern>
-      //    - git diff <file1> <file2>
-      //    - git commit
-      //    - git push
-      cout << argc - 1 << ' ';
-      int tokens = parseCommand(argv[i], commands);
-      // TODO: Write your code here...
-      // -->
-   }
-   return SUCCESS;
+    // bailed out if we do not have enough arguments to process
+    if (argc < 2) {
+        cout << "ERROR: invalid number of command-line arguments." << endl;
+        return FAILURE;
+    }
+    // Contains all repositories added via command-line. Don't forget
+    // to close a previously opened directory!
+    vector<Directory> directories;
+    // Contains all changes made to files and before a commit command
+    // is executed. Don't forget to move them to the commits vector
+    // every time a commit command is executed
+    vector<Position> stagingArea;
+    // Contains all changes made to files which are ready to be pushed!
+    // (a.k.a supercommit)
+    vector<Position> commits;
+    // Contains the parsed command, that is, a sequence of tokens that
+    // you should process and evaluate individually
+    char* commands[MAX_ARGS];
+    // <-- add your variables here
+    // TODO: use some variables to keep track of
+    //  the current working directory and current working file.
+    // -->
+    Directory workingDirectory;
+    File workingFile;
+    // We begin at 1 because 0 contains the name of the program, which
+    // is not a command!
+    for (int i = 1; i < argc; i++) {
+        // <--
+        // 1. Make sure to validate each command before executing
+        // each command
+        //    that is, check for syntax!!
+        // 2. Here is the list of commands that you must implement and use:
+        //    - git OR git help
+        //    - git init <dir>
+        //    - git add <file_1> <file_2> ... <file_N> to <dir>
+        //    - git rm <file_1> <file_2> ... <file_N> from <dir>
+        //    - git mv <file> to <dir> <file>
+        //    - git grep <pattern> in <file> OR git grep <pattern>
+        //    - git diff <file1> <file2>
+        //    - git commit
+        //    - git push
+        int tokens = parseCommand(argv[i], commands);
+        // TODO: Write your code here...
+        // -->
+        int tokenToIndex = -1;
+        if (!stringCompare(commands[0], TOKEN_GIT) || (tokens > 1
+            && !inArray(TOKENS,commands[1],
+                        TOKENS_SIZE))) {
+            cout << ERROR_GENERAL_INVALID << endl;
+            continue;
+        }
+
+        // if "git" or "git help" is passed, print usage
+        if (commands[1][0] == '\0' || stringCompare(commands[1],
+                                                    TOKEN_HELP)) {
+            printUsage();
+            continue;
+        }
+
+        // runs if "git add" is passed
+        if (stringCompare(commands[1], TOKEN_ADD)) {
+            // no argument provided after "git add"
+            if (commands[2][0] == '\0') {
+                cout << WARNING_ADD_SYNTAX << endl;
+                cout << WARNING_ADD_MISSING_TO << endl;
+                cout << WARNING_GENERAL_DIRECTORY << endl;
+                cout << ERROR_ADD_REPOSITORY << endl;
+                continue;
+            }
+
+            // start at 3rd token to look through files until
+            // TOKEN_TO is reached
+            for (int i = 2; i < tokens; i++) {
+                // if TOKEN_TO does exist
+                if (stringCompare(commands[i],
+                                  TOKEN_TO)) {
+                    tokenToIndex = i;
+                    break;
+                }
+            }
+
+            // if TOKEN_TO does not exist
+            if (tokenToIndex == -1) {
+                cout << WARNING_ADD_SYNTAX << endl;
+                cout << WARNING_ADD_MISSING_TO << endl;
+                cout << WARNING_GENERAL_DIRECTORY << endl;
+                cout << ERROR_ADD_REPOSITORY << endl;
+                continue;
+            }
+
+            // if directory is not provided
+            printArray(const_cast<const char**>(commands), sizeof(commands) / sizeof(commands[0]));
+            cout << "STarting" << endl;
+            if (commands[tokenToIndex + 1][0] == '\0')
+                cout << "if: /0" << endl;
+            else
+                cout << "else: " << commands[tokenToIndex + 1][0] << endl;
+
+            if (commands[tokenToIndex + 1][0] == '\0') {
+                cout << "WSG" << endl;
+                cout << ERROR_ADD_INVALID_NUM_CLI << endl;
+                cout << ERROR_ADD_MISSING_DIRECTORY << endl;
+                continue;
+            }
+        }
+    }
+    return SUCCESS;
 }
 
 // TODO: write the implementation of each function here!
 int parseCommand(const char* str, char** tokens) {
     int argc = 0;
+    char line[MAX_STR_LEN];
 
     int i = 0;
+    string nullTerminating = "\0";
     while (str[i] != '\0') {
         if (str[i] == ' ') {
-            tokens[0][i] = '\0';
+            tokens[i] = nullTerminating.c_str();
             argc++;
+
+            tokens[argc] = new char[100];
+            charIndex = 0;
         } else {
-            tokens[0][i] = str[i];
+            tokens[argc][charIndex] = str[i];
+            charIndex++;
         }
 
         i++;
     }
+    tokens[argc][charIndex] = '\0';
+    argc++;
 
     return argc;
 }
@@ -243,17 +376,19 @@ bool addFileToDirectory(const char* name, Directory& dir) {
     return true;
 }
 
-void removeFileFromDirectory(vector<char*>& files, Directory& dir, bool& flag) {
+void removeFileFromDirectory(vector<char*>& files, Directory& dir,
+                             bool& flag) {
     flag = true;
     // iterate backwards for proper traversal while removing elements
     for (size_t i = files.size() - 1; i > 0; i--) {
-        string fileToBeRemoved = files[i];
+        const char* fileToBeRemoved = files[i];
         for (size_t j = dir.files.size() - 1; j > 0; j--) {
-            string curFile = dir.files[j].name;
+            const char* curFile = dir.files[j].name.c_str();
             if (fileToBeRemoved == curFile) {
                 // remove file
                 files.erase(files.begin() + i);
                 dir.files.erase(dir.files.begin() + j);
+                std::remove(fileToBeRemoved);
             }
         }
     }
@@ -289,6 +424,28 @@ bool replaceInFile(const char* str, Position& position, File& file) {
         return false;
     }
 
-
     return true;
+}
+
+bool inArray(const char** haystack, string needle, int size) {
+    for (size_t i = 0; i < size; i++) {
+        if (haystack[i] == needle) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void printArray(const char* arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < sizeof(arr[i]) / sizeof(arr[i][0]); j++) {
+            char cur = arr[i][j];
+            if (cur == '\0') {
+                cout << "/0 " << endl;
+            } else {
+                cout << cur << ' ' << endl;
+            }
+        }
+    }
 }
