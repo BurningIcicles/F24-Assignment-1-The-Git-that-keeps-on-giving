@@ -45,7 +45,7 @@ const char* TOKENS[12] = {
         TOKEN_TO
 };
 
-const int TOKENS_SIZE = sizeof(TOKENS) / sizeof(TOKENS[0]);
+const int TOKENS_SIZE = size(TOKENS);
 
 const char* WARNING_GENERAL_DIRECTORY = "WARNING: make sure a working "
                                         "directory is already opened.";
@@ -232,11 +232,11 @@ int main(int argc, char** argv) {
 
             // start at 3rd token to look through files until
             // TOKEN_TO is reached
-            for (int i = 2; i < tokens; i++) {
+            for (int j = 2; j < tokens; j++) {
                 // if TOKEN_TO does exist
-                if (stringCompare(commands[i],
+                if (stringCompare(commands[j],
                                   TOKEN_TO)) {
-                    tokenToIndex = i;
+                    tokenToIndex = j;
                     break;
                 }
             }
@@ -275,10 +275,10 @@ int parseCommand(const char* str, char** tokens) {
     char line[MAX_STR_LEN];
 
     int i = 0;
-    string nullTerminating = "\0";
+    int charIndex = 0;
     while (str[i] != '\0') {
         if (str[i] == ' ') {
-            tokens[i] = nullTerminating.c_str();
+            tokens[i] = '\0';
             argc++;
 
             tokens[argc] = new char[100];
@@ -302,8 +302,8 @@ bool makeDirectory(const char* name, vector<Directory>& directories) {
     return true;
 }
 
-int findDirectory(const char* name, vector<Directory>& directories) {
-    for (size_t i = 0; i < directories.size(); i++) {
+int findDirectory(const char* name, const vector<Directory>& directories) {
+    for (int i = 0; i < directories.size(); i++) {
         if (directories[i].name == name) {
             return i;
         }
@@ -312,9 +312,9 @@ int findDirectory(const char* name, vector<Directory>& directories) {
     return -1;
 }
 
-int findFileInDirectory(const char* name, Directory& dir) {
-    vector<File> files = dir.files;
-    for (size_t i = 0; i < files.size(); i++) {
+int findFileInDirectory(const char* name, const Directory& dir) {
+    const vector<File> files = dir.files;
+    for (int i = 0; i < files.size(); i++) {
         if (files[i].name == name) {
             return i;
         }
@@ -386,23 +386,23 @@ void removeFileFromDirectory(vector<char*>& files, Directory& dir,
             const char* curFile = dir.files[j].name.c_str();
             if (fileToBeRemoved == curFile) {
                 // remove file
-                files.erase(files.begin() + i);
-                dir.files.erase(dir.files.begin() + j);
+                files.erase(files.begin() + static_cast<long>(i));
+                dir.files.erase(dir.files.begin() + static_cast<long>(j));
                 std::remove(fileToBeRemoved);
             }
         }
     }
 
-    if (files.size() > 0) {
+    if (!files.empty()) {
         flag = false;
     }
 }
 
 bool searchInFile(const char* str, Position& position, File& file) {
-    for (size_t i = 0; i < file.lines.size(); i++) {
+    for (int i = 0; i < file.lines.size(); i++) {
         if (file.lines[i].find(str) != string::npos) {
             position.line = i;
-            position.column = file.lines[i].find(str);
+            position.column = static_cast<int>(file.lines[i].find(str));
             position.length = strLength(str);
             return true;
         }
@@ -427,7 +427,7 @@ bool replaceInFile(const char* str, Position& position, File& file) {
     return true;
 }
 
-bool inArray(const char** haystack, string needle, int size) {
+bool inArray(const char** haystack, const char* needle, const int size) {
     for (size_t i = 0; i < size; i++) {
         if (haystack[i] == needle) {
             return true;
@@ -437,10 +437,10 @@ bool inArray(const char** haystack, string needle, int size) {
     return false;
 }
 
-void printArray(const char* arr[], int size) {
+void printArray(const char* arr[], const int size) {
     for (int i = 0; i < size; i++) {
-        for (int j = 0; j < sizeof(arr[i]) / sizeof(arr[i][0]); j++) {
-            char cur = arr[i][j];
+        for (int j = 0; j < strLength(arr[i]); j++) {
+            const char cur = arr[i][j];
             if (cur == '\0') {
                 cout << "/0 " << endl;
             } else {
