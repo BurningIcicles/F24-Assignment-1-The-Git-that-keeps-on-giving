@@ -149,9 +149,11 @@ bool searchInFile(const char* str, Position& position, File& file);
 
 bool replaceInFile(const char* str, Position& position, File& file);
 
-bool inArray(const char** haystack, string needle, int size);
+bool inArray(const char** haystack, const char* needle, int size);
 
-void printArray(const char* arr[], int size);
+void printArray(char* arr[], int size);
+
+
 ///@fn int main(int, char**)
 ///@brief Entry point of our application.
 ///@param[in]argc the number of command-line argument passed to
@@ -201,9 +203,12 @@ int main(int argc, char** argv) {
         //    - git diff <file1> <file2>
         //    - git commit
         //    - git push
+
         int tokens = parseCommand(argv[i], commands);
+        printArray(commands, size(commands));
         // TODO: Write your code here...
         // -->
+
         int tokenToIndex = -1;
         if (!stringCompare(commands[0], TOKEN_GIT) || (tokens > 1
             && !inArray(TOKENS,commands[1],
@@ -251,7 +256,6 @@ int main(int argc, char** argv) {
             }
 
             // if directory is not provided
-            printArray(const_cast<const char**>(commands), sizeof(commands) / sizeof(commands[0]));
             cout << "STarting" << endl;
             if (commands[tokenToIndex + 1][0] == '\0')
                 cout << "if: /0" << endl;
@@ -272,27 +276,24 @@ int main(int argc, char** argv) {
 // TODO: write the implementation of each function here!
 int parseCommand(const char* str, char** tokens) {
     int argc = 0;
-    char line[MAX_STR_LEN];
 
     int i = 0;
     int charIndex = 0;
+    tokens[charIndex] = new char[MAX_STR_LEN];
     while (str[i] != '\0') {
-        if (str[i] == ' ') {
-            tokens[i] = '\0';
-            argc++;
+        const char cur[] = {str[i], '\0'};
 
-            tokens[argc] = new char[100];
+        if (stringCompare(cur, " ")) {
+            tokens[charIndex][i] = '\0';
+            argc++;
             charIndex = 0;
         } else {
-            tokens[argc][charIndex] = str[i];
+            tokens[charIndex][i] = str[i];
             charIndex++;
         }
-
+        tokens[charIndex] = new char[MAX_STR_LEN];
         i++;
     }
-    tokens[argc][charIndex] = '\0';
-    argc++;
-
     return argc;
 }
 
@@ -330,15 +331,21 @@ void printUsage() {
 }
 
 bool stringCompare(const char* s1, const char* s2) {
-    if (strLength(s1) != strLength(s2)) {
+    // Compare lengths first (quick check)
+    int len1 = strLength(s1);
+    int len2 = strLength(s2);
+
+    if (len1 != len2) {
         return false;
     }
 
-    for (size_t i = 0; i < strLength(s1); i++) {
+    // Compare characters one by one
+    for (int i = 0; i < len1; i++) {
         if (s1[i] != s2[i]) {
             return false;
         }
     }
+
     return true;
 }
 
@@ -428,16 +435,15 @@ bool replaceInFile(const char* str, Position& position, File& file) {
 }
 
 bool inArray(const char** haystack, const char* needle, const int size) {
-    for (size_t i = 0; i < size; i++) {
-        if (haystack[i] == needle) {
+    for (int i = 0; i < size; i++) {
+        if (stringCompare(haystack[i], needle)) {
             return true;
         }
     }
-
     return false;
 }
 
-void printArray(const char* arr[], const int size) {
+void printArray(char* arr[], const int size) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < strLength(arr[i]); j++) {
             const char cur = arr[i][j];
