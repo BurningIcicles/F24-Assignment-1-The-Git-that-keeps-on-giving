@@ -17,20 +17,23 @@ using namespace std;
 
 /// These constant variables are self-explanatory. Each is assigned
 /// a default value to silence CodeGrade's silly error detection.
-const char* TOKEN_GIT = "git";
-const char* TOKEN_HELP = "help";
-const char* TOKEN_CLONE = "clone";
-const char* TOKEN_INIT = "init";
-const char* TOKEN_ADD = "add";
-const char* TOKEN_MV = "mv";
-const char* TOKEN_RM = "rm";
-const char* TOKEN_DIFF = "diff";
-const char* TOKEN_GREP = "grep";
-const char* TOKEN_COMMIT = "commit";
-const char* TOKEN_PUSH = "push";
-const char* TOKEN_TO = "to";
+// constants to store valid tokens
+const char* TOKEN_GIT = "git\0";
+const char* TOKEN_HELP = "help\0";
+const char* TOKEN_CLONE = "clone\0";
+const char* TOKEN_INIT = "init\0";
+const char* TOKEN_ADD = "add\0";
+const char* TOKEN_MV = "mv\0";
+const char* TOKEN_RM = "rm\0";
+const char* TOKEN_DIFF = "diff\0";
+const char* TOKEN_GREP = "grep\0";
+const char* TOKEN_COMMIT = "commit\0";
+const char* TOKEN_PUSH = "push\0";
+const char* TOKEN_TO = "to\0";
+const char* TOKEN_FROM = "from\0";
+const char* TOKEN_IN = "in\0";
 
-const char* TOKENS[12] = {
+const char* TOKENS[14] = {
         TOKEN_GIT,
         TOKEN_HELP,
         TOKEN_CLONE,
@@ -42,19 +45,48 @@ const char* TOKENS[12] = {
         TOKEN_GREP,
         TOKEN_COMMIT,
         TOKEN_PUSH,
-        TOKEN_TO
+        TOKEN_TO,
+        TOKEN_FROM,
+        TOKEN_IN
 };
 
 const int TOKENS_SIZE = sizeof(TOKENS) / sizeof(TOKENS[0]);
 
+const char* INFO_INIT_REPO_CREATED = "INFO: repository successfully "
+                                     "created!";
+
+const char* INFO_ADD_FILE_NOT_FOUND = "INFO: file '%s' not "
+                                      "found in test.";
+
+const char* INFO_ADD_FILE_TO_REPO = "INFO: Adding file to "
+                                       "repository...";
+
+const char* INFO_ADD_FILE_SUCCESSFUL = "INFO: file 'f1' was "
+                                       "successfully added.";
+
 const char* WARNING_GENERAL_DIRECTORY = "WARNING: make sure a working "
                                         "directory is already opened.";
+
+const char* WARNING_GENERAL_FILE = "WARNING: make sure a working "
+                                        "file is already opened.";
 
 const char* WARNING_ADD_SYNTAX = "WARNING: possible syntax error found "
                                  "in git add.";
 
 const char* WARNING_ADD_MISSING_TO = "WARNING: missing 'to' in command, "
                                      "found 'add' instead.";
+
+const char* WARNING_RM_SYNTAX = "WARNING: possible syntax error found in"
+                                " git rm.";
+
+const char* WARNING_RM_MISSING_FROM = "WARNING: missing 'from' in "
+                                      "command, found 'rm' instead.";
+
+const char* WARNING_GREP_SYNTAX = "WARNING: possible syntax error in "
+                                  "git grep.";
+
+const char* WARNING_GREP_MISSING_IN = "WARNING: missing 'in' in "
+                                      "command, found '%s' instead.";
 
 const char* ERROR_GENERAL_INVALID = "ERROR: invalid command";
 
@@ -69,7 +101,45 @@ const char* ERROR_ADD_MISSING_DIRECTORY = "ERROR: syntax error found "
                                           "in git add. Missing name "
                                           "of directory.";
 
+const char* ERROR_RM_REPOSITORY = "ERROR: cannot remove a file because"
+                                  " repository does not exist.";
 
+const char* ERROR_RM_INVALID_NUM_CLI = "ERROR: invalid number of "
+                                       "command-line arguments"
+                                       " for git rm.";
+
+const char* ERROR_RM_MISSING_DIRECTORY = "ERROR: syntax error found in"
+                                         " git rm. Missing name of"
+                                         " directory.";
+
+const char* ERROR_MV_INVALID_NUM_CLI = "ERROR: invalid number of "
+                                       "command-line arguments "
+                                       "for git mv.";
+
+const char* ERROR_MV_MISSING_DIRECTORY_FILENAME = "ERROR: syntax error "
+                                                  "found in git mv. "
+                                                  "Missing name of "
+                                                  "directory and"
+                                                  " filename.";
+
+const char* ERROR_MV_MISSING_FILENAME = "ERROR: syntax error found in "
+                                        "git mv. Missing filename.";
+
+const char* ERROR_GREP_NO_REPO = "ERROR: cannot find pattern in file "
+                                 "because repository does not exist.";
+
+const char* ERROR_GREP_INVALID_CLI = "ERROR: invalid number of "
+                                     "command-line arguments "
+                                     "for git grep.";
+
+const char* ERROR_GREP_PATTERN = "ERROR: filename cannot be a pattern.";
+
+const char* ERROR_DIFF_INVALID_CLI = "ERROR: invalid number of "
+                                     "command-line arguments for"
+                                     " git diff.";
+
+const char* ERROR_DIFF_INVALID_ARGS = "ERROR: command git diff expects"
+                                      " 2 arguments, found %d.";
 
 const int SUCCESS = 0;
 const int FAILURE = 0;
@@ -149,7 +219,7 @@ bool searchInFile(const char* str, Position& position, File& file);
 
 bool replaceInFile(const char* str, Position& position, File& file);
 
-bool inArray(const char** haystack, string needle, int size);
+bool inArray(const char** haystack, const char* needle, int size);
 
 void printArray(const char* arr[], int size);
 ///@fn int main(int, char**)
@@ -162,7 +232,8 @@ void printArray(const char* arr[], int size);
 int main(int argc, char** argv) {
     // bailed out if we do not have enough arguments to process
     if (argc < 2) {
-        cout << "ERROR: invalid number of command-line arguments." << endl;
+        cout << "ERROR: invalid number of "
+                "command-line arguments." << endl;
         return FAILURE;
     }
     // Contains all repositories added via command-line. Don't forget
@@ -191,7 +262,8 @@ int main(int argc, char** argv) {
         // 1. Make sure to validate each command before executing
         // each command
         //    that is, check for syntax!!
-        // 2. Here is the list of commands that you must implement and use:
+        // 2. Here is the list of commands that you must implement
+        // and use:
         //    - git OR git help
         //    - git init <dir>
         //    - git add <file_1> <file_2> ... <file_N> to <dir>
@@ -203,8 +275,14 @@ int main(int argc, char** argv) {
         //    - git push
         int tokens = parseCommand(argv[i], commands);
         // TODO: Write your code here...
-        // -->
+        // stores index of where 'to', 'from' and 'in' tokens
+        // are in commands
         int tokenToIndex = -1;
+        int tokenFromIndex = -1;
+        int tokenInIndex = -1;
+        // if args does not start with `git` or does not start with
+        // `git TOKEN` where TOKEN is a valid token, print an invalid
+        // command message
         if (!stringCompare(commands[0], TOKEN_GIT) || (tokens > 1
             && !inArray(TOKENS,commands[1],
                         TOKENS_SIZE))) {
@@ -232,11 +310,11 @@ int main(int argc, char** argv) {
 
             // start at 3rd token to look through files until
             // TOKEN_TO is reached
-            for (int i = 2; i < tokens; i++) {
+            for (int j = 2; j < tokens; j++) {
                 // if TOKEN_TO does exist
-                if (stringCompare(commands[i],
+                if (stringCompare(commands[j],
                                   TOKEN_TO)) {
-                    tokenToIndex = i;
+                    tokenToIndex = j;
                     break;
                 }
             }
@@ -251,46 +329,182 @@ int main(int argc, char** argv) {
             }
 
             // if directory is not provided
-            printArray(const_cast<const char**>(commands), sizeof(commands) / sizeof(commands[0]));
-            cout << "STarting" << endl;
-            if (commands[tokenToIndex + 1][0] == '\0')
-                cout << "if: /0" << endl;
-            else
-                cout << "else: " << commands[tokenToIndex + 1][0] << endl;
-
             if (commands[tokenToIndex + 1][0] == '\0') {
-                cout << "WSG" << endl;
                 cout << ERROR_ADD_INVALID_NUM_CLI << endl;
                 cout << ERROR_ADD_MISSING_DIRECTORY << endl;
                 continue;
             }
         }
+
+        // runs if "git rm" is passed
+        if (stringCompare(commands[1], TOKEN_RM)) {
+            // no argument provided after "git rm"
+            if (commands[2][0] == '\0') {
+                cout << WARNING_RM_SYNTAX << endl;
+                cout << WARNING_RM_MISSING_FROM << endl;
+                cout << WARNING_GENERAL_DIRECTORY << endl;
+                cout << ERROR_RM_REPOSITORY << endl;
+                continue;
+            }
+
+            // start at 3rd token to look through files until
+            // TOKEN_FROM is reached
+            for (int j = 2; j < tokens; j++) {
+                // if TOKEN_FROM does exist
+                if (stringCompare(commands[j],
+                                  TOKEN_FROM)) {
+                    tokenFromIndex = j;
+                    break;
+                }
+            }
+
+            // if directory is not provided
+            if (commands[tokenFromIndex + 1][0] == '\0') {
+                cout << ERROR_RM_INVALID_NUM_CLI << endl;
+                cout << ERROR_RM_MISSING_DIRECTORY << endl;
+                continue;
+            }
+        }
+
+        // runs if "git mv" is passed
+        if (stringCompare(commands[1], TOKEN_MV)) {
+            // no argument provided after "git mv"
+            if (commands[2][0] == '\0') {
+                cout << ERROR_MV_INVALID_NUM_CLI << endl;
+                cout << ERROR_MV_MISSING_DIRECTORY_FILENAME << endl;
+                continue;
+            }
+
+            // start at 3rd token to look through files until
+            // TOKEN_TO is reached
+            for (int j = 2; j < tokens; j++) {
+                // if TOKEN_TO does exist
+                if (stringCompare(commands[j],
+                                  TOKEN_TO)) {
+                    tokenToIndex = j;
+                    break;
+                }
+            }
+
+            // if directory is not provided
+            if (commands[tokenToIndex + 1][0] == '\0') {
+                cout << ERROR_MV_INVALID_NUM_CLI << endl;
+                cout << ERROR_MV_MISSING_FILENAME << endl;
+                continue;
+            }
+        }
+
+        // runs if `git grep` is passed
+        if (stringCompare(commands[1], TOKEN_GREP)) {
+            // no argument provided after "git grep"
+            if (commands[2][0] == '\0') {
+                cout << WARNING_GREP_SYNTAX << endl;
+                // formats WARNING_GREP_MISSING_IN message
+                // replaces %s with 'grep'
+                string warningString = WARNING_GREP_MISSING_IN;
+                warningString.replace(
+                warningString.find("%s"),
+                 2, commands[1]);
+                cout << warningString << endl;
+                cout << WARNING_GENERAL_FILE << endl;
+                cout << ERROR_GREP_NO_REPO << endl;
+                continue;
+            }
+
+            // start at 3rd token to look through files until
+            // TOKEN_IN is reached
+            for (int j = 2; j < tokens; j++) {
+                // if TOKEN_IN does exist
+                if (stringCompare(commands[j],
+                                  TOKEN_IN)) {
+                    tokenInIndex = j;
+                    break;
+                }
+            }
+
+            // if TOKEN_IN does not exist
+            if (tokenInIndex == -1) {
+                cout << WARNING_GREP_SYNTAX << endl;
+                // formats WARNING_GREP_MISSING_IN
+                // replaces %s with last token provided
+                string warningString = WARNING_GREP_MISSING_IN;
+                warningString.replace(
+                        warningString.find("%s"),
+                        2, commands[tokens - 1]);
+                cout << warningString << endl;
+                cout << WARNING_GENERAL_FILE << endl;
+                // print out separate error messages
+                if (tokens < 4) {
+                    // if 3 tokens are passed
+                    // git grep hello
+                    cout << ERROR_GREP_NO_REPO << endl;
+                } else {
+                    // if >3 tokens are passed
+                    // git grep hello with f1
+                    cout << ERROR_GREP_INVALID_CLI << endl;
+                    cout << ERROR_GREP_PATTERN << endl;
+                }
+                continue;
+            }
+        }
+
+        // run if "git diff" is passed
+        if (stringCompare(commands[1], TOKEN_DIFF)) {
+            // none or only one argument provided after "git diff"
+            if (commands[2][0] == '\0' || commands[3][0] == '\0') {
+                cout << ERROR_DIFF_INVALID_CLI << endl;
+                // format ERROR_DIFF_INVALID_ARGS
+                // prints number of args passed after "git diff"
+                string errorString = ERROR_DIFF_INVALID_ARGS;
+                errorString.replace(
+                        errorString.find("%d"),
+                        2, to_string(tokens - 2));
+                cout << errorString << endl;
+            }
+        }
+
+        // run if "git init" is passed
+        if (stringCompare(commands[1], TOKEN_INIT)) {
+            cout << INFO_INIT_REPO_CREATED << endl;
+        }
     }
+
     return SUCCESS;
 }
 
 // TODO: write the implementation of each function here!
 int parseCommand(const char* str, char** tokens) {
     int argc = 0;
-    char line[MAX_STR_LEN];
 
     int i = 0;
-    string nullTerminating = "\0";
+    int wordIndex = 0;
+    int charIndex = 0;
+    // allocate space for word
+    tokens[wordIndex] = new char[MAX_STR_LEN];
     while (str[i] != '\0') {
         if (str[i] == ' ') {
-            tokens[i] = nullTerminating.c_str();
+            // replace space with null terminating character
+            tokens[wordIndex][charIndex] = '\0';
             argc++;
-
-            tokens[argc] = new char[100];
+            wordIndex++;
             charIndex = 0;
+            // allocate space for the next token
+            tokens[wordIndex] = new char[MAX_STR_LEN];
         } else {
-            tokens[argc][charIndex] = str[i];
+            // add char to array
+            tokens[wordIndex][charIndex] = str[i];
             charIndex++;
         }
 
         i++;
     }
-    tokens[argc][charIndex] = '\0';
+    // add null terminating character to last word
+    tokens[wordIndex][charIndex] = '\0';
+    wordIndex++;
+    charIndex = 0;
+    // create a new word with first and only char as null terminated
+    tokens[wordIndex] = new char[MAX_STR_LEN];
+    tokens[wordIndex][charIndex] = '\0';
     argc++;
 
     return argc;
@@ -303,7 +517,7 @@ bool makeDirectory(const char* name, vector<Directory>& directories) {
 }
 
 int findDirectory(const char* name, vector<Directory>& directories) {
-    for (size_t i = 0; i < directories.size(); i++) {
+    for (int i = 0; i < directories.size(); i++) {
         if (directories[i].name == name) {
             return i;
         }
@@ -314,7 +528,7 @@ int findDirectory(const char* name, vector<Directory>& directories) {
 
 int findFileInDirectory(const char* name, Directory& dir) {
     vector<File> files = dir.files;
-    for (size_t i = 0; i < files.size(); i++) {
+    for (int i = 0; i < files.size(); i++) {
         if (files[i].name == name) {
             return i;
         }
@@ -324,17 +538,19 @@ int findFileInDirectory(const char* name, Directory& dir) {
 }
 
 void printUsage() {
-    for (size_t i = 0; i < strLength(USAGE.c_str()); i++) {
+    for (int i = 0; i < strLength(USAGE.c_str()); i++) {
         cout << USAGE[i];
     }
 }
 
 bool stringCompare(const char* s1, const char* s2) {
+//    cout << s1 << ' ' << strLength(s1) << endl;
+//    cout << s2 << ' ' << strLength(s2) << endl;
     if (strLength(s1) != strLength(s2)) {
         return false;
     }
 
-    for (size_t i = 0; i < strLength(s1); i++) {
+    for (int i = 0; i < strLength(s1); i++) {
         if (s1[i] != s2[i]) {
             return false;
         }
@@ -380,9 +596,9 @@ void removeFileFromDirectory(vector<char*>& files, Directory& dir,
                              bool& flag) {
     flag = true;
     // iterate backwards for proper traversal while removing elements
-    for (size_t i = files.size() - 1; i > 0; i--) {
+    for (int i = files.size() - 1; i > 0; i--) {
         const char* fileToBeRemoved = files[i];
-        for (size_t j = dir.files.size() - 1; j > 0; j--) {
+        for (int j = dir.files.size() - 1; j > 0; j--) {
             const char* curFile = dir.files[j].name.c_str();
             if (fileToBeRemoved == curFile) {
                 // remove file
@@ -399,7 +615,7 @@ void removeFileFromDirectory(vector<char*>& files, Directory& dir,
 }
 
 bool searchInFile(const char* str, Position& position, File& file) {
-    for (size_t i = 0; i < file.lines.size(); i++) {
+    for (int i = 0; i < file.lines.size(); i++) {
         if (file.lines[i].find(str) != string::npos) {
             position.line = i;
             position.column = file.lines[i].find(str);
@@ -414,38 +630,28 @@ bool searchInFile(const char* str, Position& position, File& file) {
 bool replaceInFile(const char* str, Position& position, File& file) {
     string targetLine = file.lines[position.line];
 
-    // can not replace a line with a negative index or an index higher than number of lines in file
+    // can not replace a line with a negative index or an
+    // index higher than number of lines in file
     if (position.line < 0 || position.line > file.lines.size()) {
         return false;
     }
 
-    // can not replace column with negative index or higher than number of characters in line
-    if (position.column < 0 || position.column > strLength(file.lines[position.line].c_str())) {
+    // can not replace column with negative index or higher than
+    // number of characters in line
+    if (position.column < 0 || position.column >
+            strLength(file.lines[position.line].c_str())) {
         return false;
     }
 
     return true;
 }
 
-bool inArray(const char** haystack, string needle, int size) {
-    for (size_t i = 0; i < size; i++) {
-        if (haystack[i] == needle) {
+bool inArray(const char** haystack, const char* needle, int size) {
+    for (int i = 0; i < size; i++) {
+        if (stringCompare(haystack[i], needle)) {
             return true;
         }
     }
 
     return false;
-}
-
-void printArray(const char* arr[], int size) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < sizeof(arr[i]) / sizeof(arr[i][0]); j++) {
-            char cur = arr[i][j];
-            if (cur == '\0') {
-                cout << "/0 " << endl;
-            } else {
-                cout << cur << ' ' << endl;
-            }
-        }
-    }
 }
