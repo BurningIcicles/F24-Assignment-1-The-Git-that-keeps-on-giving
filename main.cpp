@@ -328,12 +328,17 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            // if directory is not provided
-            if (commands[tokenToIndex + 1][0] == '\0') {
+            // if directory is not provided or directory is not found
+            if (commands[tokenToIndex + 1][0] == '\0' ||
+                findDirectory(commands[tokenToIndex + 1],
+                              directories)) {
                 cout << ERROR_ADD_INVALID_NUM_CLI << endl;
                 cout << ERROR_ADD_MISSING_DIRECTORY << endl;
                 continue;
             }
+
+            // if arguments are valid, add file to directory
+//            addFileToDirectory(commands[tokenToIndex + 1], directories)
         }
 
         // runs if "git rm" is passed
@@ -463,9 +468,10 @@ int main(int argc, char** argv) {
             }
         }
 
-        // run if "git init" is passed
+        // runs if "git init" is passed
         if (stringCompare(commands[1], TOKEN_INIT)) {
             cout << INFO_INIT_REPO_CREATED << endl;
+            makeDirectory(commands[2], directories);
         }
     }
 
